@@ -14,17 +14,17 @@ public class ShortestPath {
                 {"물건17", "물건18", "물건19", "물건20"}
         };
 
-        String[] items = {"입구", "물건8", "물건19", "물건13", "물건10"};
+        String[] items = {"입구", "물건20", "물건19", "물건13", "물건10"};
         double[][] graph = createGraph(storeMap, items);
 
-        dijkstra(graph, 0);
+        List<Integer> shortestPath = dijkstra(graph, 0);
+        printShortestPath(items, shortestPath);
     }
 
     private static double[][] createGraph(String[][] storeMap, String[] items) {
         int numItems = items.length;
-        double[][] graph = new double[numItems][numItems]; // 물건들과 입구의 위치를 포함한 그래프 배열 생성
+        double[][] graph = new double[numItems][numItems];
 
-        // 물건들과 입구의 위치 간의 거리를 계산하여 그래프에 가중치로 설정
         for (int i = 0; i < numItems; i++) {
             for (int j = 0; j < numItems; j++) {
                 String item1 = items[i];
@@ -37,34 +37,30 @@ public class ShortestPath {
         return graph;
     }
 
-    static double calculateWeight(String[][] storeMap, String item1, String item2) {
+    private static double calculateWeight(String[][] storeMap, String item1, String item2) {
         int item1_row = 0;
         int item1_col = 0;
         int item2_row = 0;
         int item2_col = 0;
 
-        if(item1.equals(item2))
+        if (item1.equals(item2))
             return 0;
-        else{
-            for(int i = 0; i < storeMap.length; i++){
-                for(int j = 0; j < storeMap[i].length; j++){
-                    if(storeMap[i][j].equals(item1)){
+        else {
+            for (int i = 0; i < storeMap.length; i++) {
+                for (int j = 0; j < storeMap[i].length; j++) {
+                    if (storeMap[i][j].equals(item1)) {
                         item1_row = i;
                         item1_col = j;
-                    }
-                    else if(storeMap[i][j].equals(item2)){
+                    } else if (storeMap[i][j].equals(item2)) {
                         item2_row = i;
                         item2_col = j;
                     }
-
                 }
-                if(item1_row != 0 && item2_row != 0)
+                if (item1_row != 0 && item2_row != 0)
                     break;
             }
-            double distanse = Math.sqrt((int)Math.pow(item1_row - item2_row,2)
-                    + (int)Math.pow(item1_col - item2_col,2));
-
-            return distanse;
+            double distance = Math.sqrt(Math.pow(item1_row - item2_row, 2) + Math.pow(item1_col - item2_col, 2));
+            return distance;
         }
     }
 
@@ -81,28 +77,27 @@ public class ShortestPath {
         distance[start] = 0;
 
         for (int i = 0; i < numItems - 1; i++) {
-            int current = getMinDistance(distance, visited, numItems);
-            visited[current] = true;
+            int minIndex = findMinDistance(distance, visited);
+            visited[minIndex] = true;
 
             for (int j = 0; j < numItems; j++) {
-                if (!visited[j] && graph[current][j] != 0 && distance[current] != Double.MAX_VALUE
-                        && distance[current] + graph[current][j] < distance[j]) {
-                    distance[j] = distance[current] + graph[current][j];
-                    previous[j] = current;
+                if (!visited[j] && graph[minIndex][j] != INF && distance[minIndex] + graph[minIndex][j] < distance[j]) {
+                    distance[j] = distance[minIndex] + graph[minIndex][j];
+                    previous[j] = minIndex;
                 }
             }
         }
 
-        return getShortestPath(previous, numItems - 1);
+        return buildShortestPath(previous, numItems - 1);
     }
 
-    private static int getMinDistance(double[] distance, boolean[] visited, int numItems) {
-        double minDistance = Double.MAX_VALUE;
+    private static int findMinDistance(double[] distance, boolean[] visited) {
+        double min = Double.MAX_VALUE;
         int minIndex = -1;
 
-        for (int i = 0; i < numItems; i++) {
-            if (!visited[i] && distance[i] <= minDistance) {
-                minDistance = distance[i];
+        for (int i = 0; i < distance.length; i++) {
+            if (!visited[i] && distance[i] < min) {
+                min = distance[i];
                 minIndex = i;
             }
         }
@@ -110,22 +105,16 @@ public class ShortestPath {
         return minIndex;
     }
 
-    private static List<Integer> getShortestPath(int[] previous, int end) {
+    private static List<Integer> buildShortestPath(int[] previous, int destination) {
         List<Integer> path = new ArrayList<>();
-        int current = end;
+        int current = destination;
 
         while (current != -1) {
-            path.add(current);
+            path.add(0, current);
             current = previous[current];
         }
 
-        List<Integer> shortestPath = new ArrayList<>();
-
-        for (int i = path.size() - 1; i >= 0; i--) {
-            shortestPath.add(path.get(i));
-        }
-
-        return shortestPath;
+        return path;
     }
 
     private static void printShortestPath(String[] items, List<Integer> shortestPath) {
