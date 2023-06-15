@@ -1,19 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
-
 public class MartMap {
     private static final int INF = Integer.MAX_VALUE;
 
     public static void main(String[] args) {
         int N = 8;
-
         // 물건 이름 배열
         String[] items = {"마트입구", "전자레인지", "기저귀", "청소기", 
                 "돼지고기", "냉장고", "생수", "육개장 1박스", "의자"};
-        
         // 아이템 부피 배열
         int[] volumes = {0, 10, 5, 25, 3, 40, 5, 15, 25};
-
         // 물건 그래프의 인접 행렬
         int[][] g = {
                 {0, 3, INF, 2, INF, INF, INF, INF},
@@ -25,7 +21,6 @@ public class MartMap {
                 {INF, INF, INF, INF, INF, 2, 0, 6},
                 {INF, INF, INF, INF, INF, INF, 6, 0}
         };
-
         // 물건 최소 신장 트리의 간선 정보
         int[][] mst = {
                 {0, 1, 3},
@@ -36,12 +31,6 @@ public class MartMap {
                 {6, 7, 6},
                 {1, 2, 7}
         };
-
-        int binSize = 40;
-        // 통채우기(최선 적합) 알고리즘을 사용하여 필요한 카트의 개수 계산
-        int binCount = approxBinPacking(volumes, binSize);
-
-        System.out.println("필요한 카트의 개수: " + binCount);
 
         // 인접 리스트 생성
         List<List<Integer>> a = new ArrayList<>();
@@ -95,6 +84,12 @@ public class MartMap {
             }
         }
 
+        int binSize = 40;
+        // 통채우기(최선 적합) 알고리즘을 사용하여 필요한 카트의 개수 계산
+        int binCount = approxBinPacking(volumes, binSize);
+
+        System.out.println("필요한 카트의 개수: " + binCount);
+
         System.out.print("지름길 방문 순서: ");
         for (int i = 0; i < directSeq.size(); i++) {
             System.out.print(items[directSeq.get(i)]);
@@ -119,7 +114,8 @@ public class MartMap {
             for (int j = 0; j < bins.size(); j++) {
                 int remainingSpace = bins.get(j) - itemVolume;
 
-                if (remainingSpace >= 0 && remainingSpace < bestRemainingSpace) {
+                if (remainingSpace >= 0
+                        && remainingSpace < bestRemainingSpace) {
                     bestBinIndex = j;
                     bestRemainingSpace = remainingSpace;
                 }
