@@ -7,12 +7,14 @@ public class MartMap {
     public static void main(String[] args) {
         int N = 8;
 
-        // 아이템 이름 배열
-        String[] items = {"마트입구", "전자레인지", "기저귀", "청소기", "돼지고기", "냉장고", "생수", "육개장 1박스", "의자"};
-        // 아이템 볼륨 배열
+        // 물건 이름 배열
+        String[] items = {"마트입구", "전자레인지", "기저귀", "청소기", 
+                "돼지고기", "냉장고", "생수", "육개장 1박스", "의자"};
+        
+        // 아이템 부피 배열
         int[] volumes = {0, 10, 5, 25, 3, 40, 5, 15, 25};
 
-        // 그래프의 인접 행렬
+        // 물건 그래프의 인접 행렬
         int[][] g = {
                 {0, 3, INF, 2, INF, INF, INF, INF},
                 {3, 0, 7, INF, 4, INF, INF, INF},
@@ -24,7 +26,7 @@ public class MartMap {
                 {INF, INF, INF, INF, INF, INF, 6, 0}
         };
 
-        // 최소 신장 트리의 간선 정보
+        // 물건 최소 신장 트리의 간선 정보
         int[][] mst = {
                 {0, 1, 3},
                 {1, 3, 7},
@@ -36,7 +38,7 @@ public class MartMap {
         };
 
         int binSize = 40;
-        // 근사적인 Bin Packing 알고리즘을 사용하여 필요한 카트의 개수 계산
+        // 통채우기(최선 적합) 알고리즘을 사용하여 필요한 카트의 개수 계산
         int binCount = approxBinPacking(volumes, binSize);
 
         System.out.println("필요한 카트의 개수: " + binCount);
@@ -47,7 +49,7 @@ public class MartMap {
             a.add(new ArrayList<>());
         }
 
-        // 그래프의 인접 리스트 표현과 가중치 정보 설정
+        // 물건 그래프의 인접 리스트 표현과 가중치 정보 설정
         for (int i = 0; i < mst.length; i++) {
             int u = mst[i][0];
             int v = mst[i][1];
@@ -62,7 +64,7 @@ public class MartMap {
         int current = 0;
         visitSeq.add(0);
 
-        // DFS를 사용하여 지름길 방문 순서 계산
+        // DFS를 사용하여 물건 지름길 방문 순서 계산
         while (!a.get(0).isEmpty()) {
             boolean flag = false;
             int k = 0;
@@ -104,7 +106,7 @@ public class MartMap {
         System.out.println();
     }
 
-    // 근사적인 Bin Packing 알고리즘
+    //  통채우기(최선 적합) 알고리즘
     public static int approxBinPacking(int[] itemVolumes, int binSize) {
         List<Integer> bins = new ArrayList<>();
         bins.add(binSize);
